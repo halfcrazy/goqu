@@ -10,7 +10,7 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-type testCrudActionItem struct {
+type TestCrudActionItem struct {
 	Address string `db:"address"`
 	Name    string `db:"name"`
 }
@@ -21,13 +21,13 @@ type testCrudActionNoTagsItem struct {
 }
 
 type testComposedCrudActionItem struct {
-	testCrudActionItem
+	TestCrudActionItem
 	PhoneNumber string `db:"phone_number"`
 	Age         int64  `db:"age"`
 }
 
 type testEmbeddedPtrCrudActionItem struct {
-	*testCrudActionItem
+	*TestCrudActionItem
 	PhoneNumber string `db:"phone_number"`
 	Age         int64  `db:"age"`
 }
@@ -43,9 +43,9 @@ func (me *crudExecTest) TestWithError() {
 	db := New("db-mock", mDb)
 	expectedErr := fmt.Errorf("crud exec error")
 	exec := newCrudExec(db, expectedErr, `SELECT * FROM "items"`)
-	var items []testCrudActionItem
+	var items []TestCrudActionItem
 	assert.EqualError(t, exec.ScanStructs(&items), expectedErr.Error())
-	found, err := exec.ScanStruct(&testCrudActionItem{})
+	found, err := exec.ScanStruct(&TestCrudActionItem{})
 	assert.EqualError(t, err, expectedErr.Error())
 	assert.False(t, found)
 	var vals []string
@@ -91,9 +91,9 @@ func (me *crudExecTest) TestScanStructs() {
 	db := New("db-mock", mDb)
 	exec := newCrudExec(db, nil, `SELECT * FROM "items"`)
 
-	var items []testCrudActionItem
+	var items []TestCrudActionItem
 	assert.EqualError(t, exec.ScanStructs(items), "goqu: Type must be a pointer to a slice when calling ScanStructs")
-	assert.EqualError(t, exec.ScanStructs(&testCrudActionItem{}), "goqu: Type must be a pointer to a slice when calling ScanStructs")
+	assert.EqualError(t, exec.ScanStructs(&TestCrudActionItem{}), "goqu: Type must be a pointer to a slice when calling ScanStructs")
 	assert.EqualError(t, exec.ScanStructs(&items), "query error")
 
 	assert.NoError(t, exec.ScanStructs(&items))
@@ -117,7 +117,7 @@ func (me *crudExecTest) TestScanStructs() {
 	assert.Equal(t, composed[1].PhoneNumber, "222-222-2222")
 	assert.Equal(t, composed[1].Age, 30)
 
-	var pointers []*testCrudActionItem
+	var pointers []*TestCrudActionItem
 	assert.NoError(t, exec.ScanStructs(&pointers))
 	assert.Len(t, pointers, 2)
 	assert.Equal(t, pointers[0].Address, "111 Test Addr")
@@ -190,8 +190,8 @@ func (me *crudExecTest) TestScanStruct() {
 	db := New("db-mock", mDb)
 	exec := newCrudExec(db, nil, `SELECT * FROM "items"`)
 
-	var slicePtr []testCrudActionItem
-	var item testCrudActionItem
+	var slicePtr []TestCrudActionItem
+	var item TestCrudActionItem
 	found, err := exec.ScanStruct(item)
 	assert.EqualError(t, err, "goqu: Type must be a pointer to a struct when calling ScanStruct")
 	assert.False(t, found)

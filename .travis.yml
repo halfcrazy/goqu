@@ -6,9 +6,7 @@ services:
 go_import_path: gopkg.in/doug-martin/goqu.v4
 
 env:
-  - GO_VERSION="1.6"
-  - GO_VERSION="1.7"
-  - GO_VERSION="latest"
+  - GO_VERSION="1.10"
 
 before_install:
  - curl -L https://github.com/docker/compose/releases/download/1.8.1/docker-compose-`uname -s`-`uname -m` > docker-compose
